@@ -43,32 +43,35 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const EditPage(),
-                ),
-              ).then((val) => getFiles());
-            },
-            icon: const Icon(Icons.info_outline),
-          ),
-        ]),
-        body: ListView(children: [
-          for (var note in notes)
-            ListTile(
-                title: Text(note),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditPage(note: note),
-                    ),
-                  );
-                })
-        ]));
+      appBar: AppBar(actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EditPage(),
+              ),
+            ).then((didSave) => {
+                  if (didSave != null) {getFiles()}
+                });
+          },
+          icon: const Icon(Icons.info_outline),
+        ),
+      ]),
+      body: ListView(
+          children: notes
+              .map((note) => ListTile(
+                  title: Text(note),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditPage(note: note),
+                      ),
+                    );
+                  }))
+              .toList()),
+    );
   }
 }
 
@@ -84,11 +87,6 @@ class EditPageState extends State<EditPage> {
   final List<dynamic> content = [];
   QuillController? _controller; // = QuillController.basic();
 
-  get notesDir async {
-    Directory dir = await getApplicationDocumentsDirectory(); // 1
-    return dir.path;
-  }
-
   writeNote(context) async {
     String name;
     if (widget.note == null) {
@@ -99,7 +97,7 @@ class EditPageState extends State<EditPage> {
     final content =
         jsonEncode(_controller?.document.toDelta().toJson()).toString();
     await fs.writeFile(content, name);
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override
@@ -147,7 +145,7 @@ class EditPageState extends State<EditPage> {
             padding: const EdgeInsets.all(8.0),
             child: QuillEditor.basic(
               controller: _controller!,
-              readOnly: false, // true for view only mode
+              readOnly: false,
             ),
           ),
         )
