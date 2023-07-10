@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
-import 'package:path_provider/path_provider.dart';
 import 'fs.dart';
 
 void main() {
@@ -55,7 +54,7 @@ class HomePageState extends State<HomePage> {
                   if (didSave != null) {getFiles()}
                 });
           },
-          icon: const Icon(Icons.info_outline),
+          icon: const Icon(Icons.add),
         ),
       ]),
       body: ListView(
@@ -77,6 +76,7 @@ class HomePageState extends State<HomePage> {
 
 class EditPage extends StatefulWidget {
   const EditPage({super.key, this.note});
+  // ignore: prefer_typing_uninitialized_variables
   final note;
   @override
   EditPageState createState() => EditPageState();
