@@ -42,7 +42,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(actions: [
+      appBar: AppBar(title: const Text("Notes"), actions: [
         IconButton(
           onPressed: () {
             Navigator.push(
