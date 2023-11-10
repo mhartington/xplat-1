@@ -41,4 +41,9 @@ class FileSystemWrapper {
     final file = File('${notesDir.path}$fileName');
     await file.writeAsString(content);
   }
+  deleteFile(String fileName) async {
+    final notesDir = await notesPath;
+    final file = File('${notesDir.path}$fileName');
+    await file.delete();
+  }
 }

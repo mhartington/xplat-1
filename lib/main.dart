@@ -50,9 +50,7 @@ class HomePageState extends State<HomePage> {
               MaterialPageRoute(
                 builder: (context) => const EditPage(),
               ),
-            ).then((didSave) => {
-                  if (didSave != null) {getFiles()}
-                });
+            ).then((_) => {getFiles()});
           },
           icon: const Icon(Icons.add),
         ),
@@ -67,7 +65,7 @@ class HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                         builder: (context) => EditPage(note: note),
                       ),
-                    );
+                    ).then((_) => getFiles());
                   }))
               .toList()),
     );
@@ -100,6 +98,11 @@ class EditPageState extends State<EditPage> {
     Navigator.pop(context, true);
   }
 
+  deleteNote(context) async {
+    await fs.deleteFile(widget.note);
+    Navigator.pop(context, false);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,6 +126,28 @@ class EditPageState extends State<EditPage> {
     }
   }
 
+  List<Widget> getActions() {
+    if (widget.note != null) {
+      return [
+        IconButton(
+          onPressed: () => writeNote(context),
+          icon: const Icon(Icons.save),
+        ),
+        IconButton(
+          onPressed: () => deleteNote(context),
+          icon: const Icon(Icons.delete),
+        ),
+      ];
+    } else {
+      return [
+        IconButton(
+          onPressed: () => writeNote(context),
+          icon: const Icon(Icons.save),
+        ),
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_controller == null) {
@@ -131,12 +156,7 @@ class EditPageState extends State<EditPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editor'),
-        actions: [
-          IconButton(
-            onPressed: () => writeNote(context),
-            icon: const Icon(Icons.save),
-          ),
-        ],
+        actions: getActions(),
       ),
       body: Column(children: [
         QuillToolbar.basic(controller: _controller!),
